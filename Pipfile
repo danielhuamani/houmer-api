@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 Werkzeug = "==1.0.1"
 flask = "*"
+pynamodb = "*"
 
 [dev-packages]
 

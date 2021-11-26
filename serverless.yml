@@ -23,9 +23,30 @@ frameworkVersion: '2'
 provider:
   name: aws
   runtime: python3.8
+  stage: ${env:STAGE, 'dev'}
+  region: ${env:REGION, 'us-east-2'}
   lambdaHashingVersion: 20201221
   apiGateway:
     shouldStartNameWithService: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:DescribeTable
+          Resource:
+            - Fn::GetAtt: [houmerTable, Arn]
+  environment:
+    DYNAMODB_PORT: ${env:DYNAMODB_PORT}
+    TABLE_HOUMER: ${self:service}-${opt:stage,'dev'}-houmer
+    REGION: ${env:REGION}
+    STAGE: ${env:STAGE}
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
@@ -63,11 +84,28 @@ custom:
     app: src.app.app
   pythonRequirements:
     pythonBin: python3
-    usePipenv: true
+    usePipenv: false
+  # dynamodb:
+  # # If you only want to use DynamoDB Local in some stages, declare them here
+  #   stages:
+  #     - dev
+  #   start:
+  #     image: dynamo
+  #     host: 0.0.0.0
+  #     port: 8002
+  #     inMemory: true
+  #     heapInitial: 200m
+  #     heapMax: 1g
+  #     migrate: true
+  #     seed: true
+  #     convertEmptyValues: true
 
 plugins:
   - serverless-python-requirements
   - serverless-wsgi
+  - serverless-dynamodb-local
+  - serverless-dotenv-plugin
+
 functions:
   app:
     handler: wsgi_handler.handler
@@ -115,17 +153,21 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
-
+resources:
+  Resources:
+    logTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: ${self:provider.environment.TABLE_HOUMER}
+        AttributeDefinitions:
+          - 
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+          
 package:
   exclude:
     - node_modules/**

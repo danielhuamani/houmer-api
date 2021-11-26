@@ -15,8 +15,11 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-
+__pycached__
 # Serverless directories
 .serverless
 node_modules/
 .env
+.dynamodb
+.serverless-wsgi
+docker/
