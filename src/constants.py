@@ -1,0 +1,2 @@
+OPEN = "OPEN"
+EXIT = "EXIT"

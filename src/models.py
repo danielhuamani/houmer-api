@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from pynamodb.models import Model
-from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute, NumberAttribute
+from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute, NumberAttribute, UnicodeAttribute
 from .db.connection import Connection
 
 
@@ -14,11 +14,13 @@ class HoumerModel(Model):
             host = Connection.get_host_local()
 
     id = UnicodeAttribute(hash_key=True)
+    houmer_id = NumberAttribute()
     date_start = UTCDateTimeAttribute(null=False, default=datetime.now())
-    lat_start = NumberAttribute()
-    lng_start = NumberAttribute()
-    lat_end = NumberAttribute()
-    lng_end = NumberAttribute()
+    latitude_start = NumberAttribute()
+    longitude_start = NumberAttribute()
+    latitude_end = NumberAttribute(null=True)
+    longitude_end = NumberAttribute(null=True)
     date_end = UTCDateTimeAttribute(null=True)
     speed = NumberAttribute(null=True)
     distance = NumberAttribute(null=True)
+    spend_time = UnicodeAttribute(null=True)
