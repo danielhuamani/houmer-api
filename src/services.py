@@ -1,8 +1,8 @@
 import os
-from .repositories import HoumerRepository
-from .exceptions import InvalidMaxDistanceVisit
-from .utils import now_date, seconds_to_str, date_to_datetime
-from datetime import datetime, timezone, timedelta, time, date
+from src.repositories import HoumerRepository
+from src.exceptions import InvalidMaxDistanceVisit
+from src.utils import now_date, seconds_to_str, date_to_datetime
+from datetime import timezone, timedelta, date
 from geopy.distance import geodesic as GD
 from uuid import uuid4
 

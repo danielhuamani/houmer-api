@@ -7,6 +7,7 @@ provider:
   runtime: python3.8
   stage: ${env:STAGE, 'dev'}
   region: ${env:REGION, 'us-east-2'}
+  memorySize: 128
   lambdaHashingVersion: 20201221
   apiGateway:
     shouldStartNameWithService: true
@@ -66,6 +67,10 @@ resources:
           
 package:
   exclude:
-    - node_modules/**
+    - "node_modules/**"
+    - "*.md"
+    - "docker/**"
+    - "package-lock.json"
+    - "docker-compose.yml"
   include:
-    - src/**
+    - "src/**"

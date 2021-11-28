@@ -1,4 +1,4 @@
-from .db.models import HoumerModel
+from src.db.models import HoumerModel
 from datetime import datetime
 
 class HoumerRepository:

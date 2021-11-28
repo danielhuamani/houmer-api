@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
 from marshmallow import ValidationError
-from .services import HoumerService
-from .validations import CoordinatesValidateSchema, ISODateConverter
-from .exceptions import InvalidMaxDistanceVisit
-from .serializers import HoumerSerializer
+from src.services import HoumerService
+from src.validations import CoordinatesValidateSchema, ISODateConverter
+from src.exceptions import InvalidMaxDistanceVisit
+from src.serializers import HoumerSerializer
 app = Flask(__name__)
 app.url_map.converters['iso_date'] = ISODateConverter
 
@@ -32,7 +32,6 @@ def coordinates(houmer_id):
 
 @app.route("/houmer/<int:houmer_id>/<iso_date:selected_date>/visit", methods=['GET'])
 def visit(houmer_id, selected_date):
-    print(type(selected_date))
     service = HoumerService()
     houmers = service.get_by_date(houmer_id=houmer_id, selected_date=selected_date)
     serializer = HoumerSerializer()
@@ -41,7 +40,7 @@ def visit(houmer_id, selected_date):
 
 @app.route("/houmer/<int:houmer_id>/<iso_date:selected_date>/speed", methods=['GET'])
 def speed(houmer_id, selected_date):
-    speed = request.args.get('speed', 0, type=int)
+    speed = request.args.get('speed', 0, type=float)
     service = HoumerService()
     houmers = service.get_by_date_with_speed(
         houmer_id=houmer_id, selected_date=selected_date, speed=speed)
