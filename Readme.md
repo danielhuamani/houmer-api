@@ -5,11 +5,11 @@
 
 First step create .env from .env.template, after set variables for mode local you should set:
 
-MODE=LOCAL -> this variable is necessary to use dynamodb
-DYNAMODB_PORT=8000 -> it use for connect with dynamo docker 
-STAGE=dev -> stage
-REGION=us-east-2 -> region of aws
-MT2_MAX=100 -> This variable is very important because it helps determine the maximum m2 that the person can walk and send coordinates within the property
+-MODE=LOCAL -> this variable is necessary to use dynamodb
+-DYNAMODB_PORT=8000 -> it use for connect with dynamo docker 
+-STAGE=dev -> stage
+-REGION=us-east-2 -> region of aws
+-MT2_MAX=100 -> This variable is very important because it helps determine the maximum m2 that the person can walk and send coordinates within the property
 
 ## Important rules to understand the project
 
