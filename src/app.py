@@ -1,25 +1,19 @@
 from flask import Flask, request, jsonify
-from geopy import distance
 from marshmallow import ValidationError
 from .services import HoumerService
-from .db.models import HoumerModel
-from .validations import CoordinatesValidateSchema
-from .utils import now_date
+from .validations import CoordinatesValidateSchema, ISODateConverter
 from .exceptions import InvalidMaxDistanceVisit
 from .serializers import HoumerSerializer
-from datetime import date, datetime, timezone, timedelta
-from time import strftime, gmtime
-from geopy.distance import geodesic as GD  
 app = Flask(__name__)
+app.url_map.converters['iso_date'] = ISODateConverter
 
 
-@app.route("/houmer/<houmer_id>/coordinates", methods=['POST'])
+@app.route("/houmer/<int:houmer_id>/coordinates", methods=['POST'])
 def coordinates(houmer_id):
     request_data = request.get_json()
     service = HoumerService()
     try:
         result = CoordinatesValidateSchema().load(request_data)
-        houmer_id = int(houmer_id)
         houmer = service.get_last_by_houmer(houmer_id=houmer_id)
         if houmer is not None:
             latitude = result.get('latitude')
@@ -36,18 +30,16 @@ def coordinates(houmer_id):
         return jsonify(err), 403
 
 
-@app.route("/houmer/<id>/<selected_date>/visit", methods=['GET'])
-def visit(id, selected_date):
-    houmer_id = int(id)
+@app.route("/houmer/<int:houmer_id>/<selected_date>/visit", methods=['GET'])
+def visit(houmer_id, selected_date):
     service = HoumerService()
     houmers = service.get_by_date(houmer_id=houmer_id, selected_date=selected_date)
     serializer = HoumerSerializer()
     return jsonify(serializer.visit(houmers)), 200
 
 
-@app.route("/houmer/<id>/<selected_date>/speed", methods=['GET'])
-def speed(id, selected_date):
-    houmer_id = int(id)
+@app.route("/houmer/<int:houmer_id>/<iso_date:selected_date>/speed", methods=['GET'])
+def speed(houmer_id, selected_date):
     speed = request.args.get('speed', 0, type=int)
     service = HoumerService()
     houmers = service.get_by_date_with_speed(

@@ -11,7 +11,6 @@
   "license": "ISC",
   "devDependencies": {
     "serverless-dotenv-plugin": "^3.10.0",
-    "serverless-offline": "^8.3.1",
     "serverless-python-requirements": "^5.2.0",
     "serverless-wsgi": "^2.0.2"
   },

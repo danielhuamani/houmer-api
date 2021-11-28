@@ -2,7 +2,7 @@ import os
 from .repositories import HoumerRepository
 from .exceptions import InvalidMaxDistanceVisit
 from .utils import now_date, seconds_to_str
-from datetime import date, datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta
 from time import strftime, gmtime
 from geopy.distance import geodesic as GD
 from uuid import uuid4
@@ -35,19 +35,13 @@ class HoumerService:
         if distance_mt2 < self.MT2_MAX:
             spend_time = now_date() - houmer.date_start
             spend_time_hour = spend_time.seconds / 3600
-            houmer.latitude_end = latitude_end
-            houmer.longitude_end = longitude_end
-            houmer.distance = distance
-            houmer.date_end = now_date()
-            houmer.spend_time = strftime("%H:%M", gmtime(spend_time.seconds))
-            houmer.speed = distance / spend_time_hour
-            houmer.save()
             data = {
                 "latitude_end": latitude_end,
                 "longitude_end": longitude_end,
                 "distance": distance,
                 "date_end": now_date(),
-                "spend_time": seconds_to_str(spend_time.seconds)
+                "spend_time": seconds_to_str(spend_time.seconds),
+                "speed": distance / spend_time_hour
             }
             return self.repository.update(houmer, data)
         else:
