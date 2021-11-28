@@ -6,7 +6,7 @@ First step clone .env.template with .env
 
 For installation it is necessary to have two terminals.
 
-#### First terminal
+### First terminal
 
 let's install dynamodb.
 
@@ -23,7 +23,7 @@ Run dynamodb
 docker-compose up
 ```
 
-#### Second terminal
+### Second terminal
 
 for install is necessary to have node > 14
 
