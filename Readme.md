@@ -5,11 +5,11 @@
 
 First step create .env from .env.template, after set variables for mode local you should set:
 
--MODE=LOCAL -> this variable is necessary to use dynamodb
--DYNAMODB_PORT=8000 -> it use for connect with dynamo docker 
--STAGE=dev -> stage
--REGION=us-east-2 -> region of aws
--MT2_MAX=100 -> This variable is very important because it helps determine the maximum m2 that the person can walk and send coordinates within the property
+- MODE=LOCAL -> this variable is necessary to use dynamodb
+- DYNAMODB_PORT=8000 -> it use for connect with dynamo docker 
+- STAGE=dev -> stage
+- REGION=us-east-2 -> region of aws
+- MT2_MAX=100 -> This variable is very important because it helps determine the maximum m2 that the person can walk and send coordinates within the property
 
 ## Important rules to understand the project
 
@@ -35,14 +35,14 @@ let's install dynamodb.
 
 Build dynamodb
 
-```
+```bash
 docker-compose build
 ```
 
 Run dynamodb
 
 
-```
+```bash
 docker-compose up
 ```
 
@@ -53,38 +53,38 @@ for install is necessary to have node > 14
 
 install serverless global
 
-```
+```bash
 npm install -g serverless
 ```
 
 install dependencies
 
-```
+```bash
 npm install
 ```
 
 
 install pipenv
 
-```
+```bash
 pip install pipenv
 ```
 
 create environment
 
-```
+```bash
 pipenv shell
 ```
 
 install requirements
 
-```
+```bash
 pipenv install
 ```
 
 run flask
 
-```
+```bash
 sls wsgi serve -p 8002
 ```
 
@@ -92,7 +92,7 @@ sls wsgi serve -p 8002
 
 before deployment you should change variable MODE=PROD in .env
 
-```
+```bash
 sls deploy
 ```
 
@@ -106,7 +106,7 @@ method: POST
 Api: https://qn11tlev33.execute-api.us-east-2.amazonaws.com/dev/houmer/{houmerID}/coordinates
 
 body:
-```
+```json
 {
  "longitude": {float},
  "latitude": {float}
