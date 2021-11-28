@@ -1,5 +1,4 @@
-from marshmallow import fields, Schema, validates, ValidationError
-from .constants import OPEN, EXIT
+from marshmallow import fields, Schema
 
 
 class CoordinatesValidateSchema(Schema):

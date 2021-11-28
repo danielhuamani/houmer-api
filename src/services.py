@@ -24,7 +24,6 @@ class HoumerService:
         return distance
 
     def complete_visit(self, latitude, longitude, houmer):
-        print(houmer.latitude_start)
         latitude_start = houmer.latitude_start
         longitude_start = houmer.longitude_start
         latitude_end = latitude
@@ -54,8 +53,18 @@ class HoumerService:
         else:
             raise InvalidMaxDistanceVisit("Distance max not allowed")
 
-    def create(self, **data):
-        print(data, "data")
+    def create(self, **data: dict):
         data = {**data, "id": str(uuid4())}
-        print(data, "data")
         return self.repository.create(data)
+    
+    def get_by_date(self, houmer_id: int, selected_date: str):
+        date_start = datetime.strptime(selected_date, "%Y-%m-%d")
+        date_start = date_start.replace(tzinfo=timezone.utc, hour=0, minute=0, second=0, microsecond=0)
+        date_end = date_start + timedelta(hours=24)
+        return self.repository.get_by_range_date(houmer_id, date_start, date_end)
+    
+    def get_by_date_with_speed(self, houmer_id: int, selected_date: str, speed: int):
+        date_start = datetime.strptime(selected_date, "%Y-%m-%d")
+        date_start = date_start.replace(tzinfo=timezone.utc, hour=0, minute=0, second=0, microsecond=0)
+        date_end = date_start + timedelta(hours=24)
+        return self.repository.get_by_range_date_with_speed(houmer_id, date_start, date_end, speed)
