@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute, NumberAttribute, UnicodeAttribute
-from .db.connection import Connection
+from .connection import Connection
 
 
 class HoumerModel(Model):

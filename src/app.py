@@ -1,60 +1,43 @@
 from flask import Flask, request, jsonify
 from geopy import distance
 from marshmallow import ValidationError
-from .models import HoumerModel
+from .services import HoumerService
+from .db.models import HoumerModel
 from .validations import CoordinatesValidateSchema
+from .utils import now_date
+from .exceptions import InvalidMaxDistanceVisit
 from datetime import date, datetime, timezone, timedelta
 from time import strftime, gmtime
 from geopy.distance import geodesic as GD  
-from uuid import uuid4
 app = Flask(__name__)
 
 
-@app.route("/houmer/coordinates", methods=['POST'])
-def coordinates():
+@app.route("/houmer/<houmer_id>/coordinates", methods=['POST'])
+def coordinates(houmer_id):
     request_data = request.get_json()
+    service = HoumerService()
     try:
         result = CoordinatesValidateSchema().load(request_data)
-        now_date = datetime.now(timezone.utc)
-        print(now_date)
-        last_houmer = HoumerModel.scan(HoumerModel.date_start==now_date, rate_limit=1)
-        # ho = HoumerModel(houmer_id=result.get("houmer_id"), latitude_start=result.get("latitude"), longitude_start=result.get("longitude"), id=str(uuid4()))
-        # ho.save()
-        # print(ho.id, "id")
-        print('last_houmer', HoumerModel.count())
-        houmer = None
-        for item in HoumerModel.scan(HoumerModel.houmer_id==2, limit=1):
-            print("Query returned item {0}".format(item), item.date_start, item.date_start.date())
-            houmer = item
-        print(houmer)
-        if houmer:
-            latitude_start = houmer.latitude_start
-            longitude_start = houmer.longitude_start
-            latitude_end = result.get('latitude')
-            longitude_end = result.get('longitude')
-            point_start = (latitude_start, longitude_start)
-            point_final = (latitude_end, longitude_end)
-            distance = (GD(point_start, point_final).km)
-            distance_mt2 = distance * 1000
-            if distance_mt2 > 100:
-                spend_time = now_date - houmer.date_start
-                spend_time_hour = spend_time.seconds / 3600
-                houmer.latitude_end = latitude_end
-                houmer.longitude_end = longitude_end
-                houmer.distance = distance
-                houmer.date_end = now_date
-                houmer.spend_time = strftime("%H:%M", gmtime(spend_time.seconds))
-                houmer.speed = distance / spend_time_hour
-                houmer.save()
-            print(point_final, point_start, latitude_start, longitude_start)
-            print(GD(point_start, point_final).km, "dasdsdsads")
+        houmer_id = int(houmer_id)
+        houmer = service.get_last_by_houmer(houmer_id=houmer_id)
+        if houmer is not None:
+            latitude = result.get('latitude')
+            longitude = result.get('longitude')
+            try:
+                instance = service.complete_visit(latitude, longitude, houmer)
+            except InvalidMaxDistanceVisit as err:
+                instance = service.create(houmer_id=result.get("houmer_id"), latitude_start=result.get("latitude"), longitude_start=result.get("longitude"))
         else:
-            ho = HoumerModel(houmer_id=result.get("houmer_id"), latitude_start=result.get("latitude"), longitude_start=result.get("longitude"), id=str(uuid4()))
-            ho.save()
+            print(houmer_id, "houmer_id")
+            instance = service.create(houmer_id=houmer_id, latitude_start=result.get("latitude"), longitude_start=result.get("longitude"))
+        return jsonify({
+            "latitude": instance.latitude_start,
+            "longitude": instance.longitude_start,
+            "houmer_id": instance.houmer_id,
+            "id": instance.id
+        }), 201
     except ValidationError as err:
-        print(err.messages)
-    print(HoumerModel.count(), request_data, type(request_data))
-    return "Hello World!"
+        return jsonify(err), 403
 
 
 @app.route("/houmer/<id>/<selected_date>/visit", methods=['GET'])
@@ -66,7 +49,6 @@ def visit(id, selected_date):
     items = HoumerModel.scan((HoumerModel.houmer_id == int(houmer_id)) & (HoumerModel.date_start >= selected_date) & (HoumerModel.date_start < selected_date_end))
     items_serializer = []
     for x in items:
-    
         items_serializer.append({
             "latitude": x.latitude_start,
             "longitude": x.longitude_start,

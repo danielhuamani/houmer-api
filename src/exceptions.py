@@ -1,0 +1,2 @@
+class InvalidMaxDistanceVisit(Exception):
+    pass
