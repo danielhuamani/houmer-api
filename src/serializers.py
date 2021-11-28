@@ -12,8 +12,14 @@ class HoumerSerializer:
         data = []
         for houmer in houmers:
             data.append({
-                "latitude": houmer.latitude_start,
-                "longitude": houmer.longitude_start,
+                "start_coordinates": {
+                    "latitude": houmer.latitude_start,
+                    "longitude": houmer.longitude_start
+                },
+                "end_coordinates": {
+                    "latitude": houmer.latitude_end,
+                    "longitude": houmer.longitude_end
+                },
                 "spend_time": houmer.spend_time,
                 "date": {
                     "start": houmer.date_start.strftime("%Y-%m-%d %H:%M"),
@@ -26,8 +32,14 @@ class HoumerSerializer:
         data = []
         for houmer in houmers:
             data.append({
-                "latitude": houmer.latitude_start,
-                "longitude": houmer.longitude_start,
+                "start_coordinates": {
+                    "latitude": houmer.latitude_start,
+                    "longitude": houmer.longitude_start
+                },
+                "end_coordinates": {
+                    "latitude": houmer.latitude_end,
+                    "longitude": houmer.longitude_end
+                },
                 "speed": houmer.speed,
                 "date": {
                     "start": houmer.date_start.strftime("%Y-%m-%d %H:%M"),

@@ -14,7 +14,6 @@ class ISODateConverter(BaseConverter):
 
     def to_python(self, value):
         try:
-            # try and convert a string to a datetime object and then get a date object
             return datetime.strptime(value, '%Y-%m-%d').date()
         except ValueError:
             raise ValidationError()

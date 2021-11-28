@@ -30,8 +30,9 @@ def coordinates(houmer_id):
         return jsonify(err), 403
 
 
-@app.route("/houmer/<int:houmer_id>/<selected_date>/visit", methods=['GET'])
+@app.route("/houmer/<int:houmer_id>/<iso_date:selected_date>/visit", methods=['GET'])
 def visit(houmer_id, selected_date):
+    print(type(selected_date))
     service = HoumerService()
     houmers = service.get_by_date(houmer_id=houmer_id, selected_date=selected_date)
     serializer = HoumerSerializer()

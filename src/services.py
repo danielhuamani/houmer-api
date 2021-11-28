@@ -1,9 +1,8 @@
 import os
 from .repositories import HoumerRepository
 from .exceptions import InvalidMaxDistanceVisit
-from .utils import now_date, seconds_to_str
-from datetime import datetime, timezone, timedelta
-from time import strftime, gmtime
+from .utils import now_date, seconds_to_str, date_to_datetime
+from datetime import datetime, timezone, timedelta, time, date
 from geopy.distance import geodesic as GD
 from uuid import uuid4
 
@@ -51,14 +50,13 @@ class HoumerService:
         data = {**data, "id": str(uuid4())}
         return self.repository.create(data)
     
-    def get_by_date(self, houmer_id: int, selected_date: str):
-        date_start = datetime.strptime(selected_date, "%Y-%m-%d")
-        date_start = date_start.replace(tzinfo=timezone.utc, hour=0, minute=0, second=0, microsecond=0)
+    def get_by_date(self, houmer_id: int, selected_date: date):
+        date_start = date_to_datetime(selected_date)
         date_end = date_start + timedelta(hours=24)
         return self.repository.get_by_range_date(houmer_id, date_start, date_end)
     
-    def get_by_date_with_speed(self, houmer_id: int, selected_date: str, speed: int):
-        date_start = datetime.strptime(selected_date, "%Y-%m-%d")
+    def get_by_date_with_speed(self, houmer_id: int, selected_date: date, speed: int):
+        date_start = date_to_datetime(selected_date)
         date_start = date_start.replace(tzinfo=timezone.utc, hour=0, minute=0, second=0, microsecond=0)
         date_end = date_start + timedelta(hours=24)
         return self.repository.get_by_range_date_with_speed(houmer_id, date_start, date_end, speed)

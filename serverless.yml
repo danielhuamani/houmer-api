@@ -51,7 +51,7 @@ functions:
       - http: 'ANY /{proxy+}'
 resources:
   Resources:
-    logTable:
+    houmerTable:
       Type: "AWS::DynamoDB::Table"
       Properties:
         TableName: ${self:provider.environment.TABLE_HOUMER}
@@ -67,3 +67,5 @@ resources:
 package:
   exclude:
     - node_modules/**
+  include:
+    - src/**
