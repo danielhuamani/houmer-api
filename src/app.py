@@ -12,6 +12,7 @@ app.url_map.converters['iso_date'] = ISODateConverter
 def coordinates(houmer_id):
     request_data = request.get_json()
     service = HoumerService()
+    serializer = HoumerSerializer()
     try:
         result = CoordinatesValidateSchema().load(request_data)
         houmer = service.get_last_by_houmer(houmer_id=houmer_id)
@@ -20,11 +21,11 @@ def coordinates(houmer_id):
             longitude = result.get('longitude')
             try:
                 instance = service.complete_visit(latitude, longitude, houmer)
+                return jsonify(serializer.coordinates(instance)), 200
             except InvalidMaxDistanceVisit as err:
                 instance = service.create(houmer_id=result.get("houmer_id"), latitude_start=result.get("latitude"), longitude_start=result.get("longitude"))
         else:
             instance = service.create(houmer_id=houmer_id, latitude_start=result.get("latitude"), longitude_start=result.get("longitude"))
-        serializer = HoumerSerializer()
         return jsonify(serializer.coordinates(instance)), 201
     except ValidationError as err:
         return jsonify(err), 403
@@ -46,3 +47,6 @@ def speed(houmer_id, selected_date):
         houmer_id=houmer_id, selected_date=selected_date, speed=speed)
     serializer = HoumerSerializer()
     return jsonify(serializer.speed(houmers)), 200
+
+if __name__ == "__main__":
+    app.run()

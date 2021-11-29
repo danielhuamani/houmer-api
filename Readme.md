@@ -88,6 +88,14 @@ run flask
 sls wsgi serve -p 8002
 ```
 
+
+## Unit Test
+
+```bash
+pytest
+```
+
+
 ## Deploy
 
 before deployment you should change variable MODE=PROD in .env

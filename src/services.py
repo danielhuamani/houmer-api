@@ -20,7 +20,6 @@ class HoumerService:
     
     def calculate_distance_km(self, point_start, point_end):
         distance = GD(point_start, point_end).km
-        print(type(distance))
         return distance
 
     def complete_visit(self, latitude, longitude, houmer):
@@ -35,17 +34,21 @@ class HoumerService:
         if distance_mt2 < self.MT2_MAX:
             spend_time = now_date() - houmer.date_start
             spend_time_hour = convert_seconds_to_hours(spend_time.seconds)
+            if spend_time_hour == float(0):
+                speed = 0
+            else:
+                speed = distance / spend_time_hour
             data = {
                 "latitude_end": latitude_end,
                 "longitude_end": longitude_end,
                 "distance": distance,
                 "date_end": now_date(),
                 "spend_time": seconds_to_str(spend_time.seconds),
-                "speed": distance / spend_time_hour
+                "speed": speed
             }
             return self.repository.update(houmer, data)
         else:
-            raise InvalidMaxDistanceVisit("Distance max not allowed")
+            raise InvalidMaxDistanceVisit("maximum distance not allowed")
 
     def create(self, **data: dict):
         data = {**data, "id": str(uuid4())}

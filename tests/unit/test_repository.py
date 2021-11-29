@@ -16,10 +16,9 @@ def test_repository_last_by_houmer_none():
 def test_repository_last_by_houmer_exists(create_houmer_b_2, create_houmer_b):
     repository = HoumerRepository()
     houmer = repository.get_last_by_houmer(id=3)
-    assert houmer.id == create_houmer_b.id
+    assert houmer.id == create_houmer_b_2.id
 
-
-def test_repository_get_by_range_date(create_houmer_b_2, create_houmer_b):
+def test_repository_get_by_range_date(create_houmer_b_2):
     now = now_date()
     date_start = date_to_datetime(now.date())
     date_start = date_start.replace(tzinfo=timezone.utc, hour=0, minute=0, second=0, microsecond=0)
@@ -32,7 +31,7 @@ def test_repository_get_by_range_date(create_houmer_b_2, create_houmer_b):
     assert create_houmer_b_2.id in total_ids
 
 
-def test_repository_get_by_range_date(create_houmer_b_2, create_houmer_b):
+def test_repository_get_by_range_date(create_houmer_b_2):
     now = now_date()
     date_start = date_to_datetime(now.date())
     date_start, date_end = range_datetime(date_start)

@@ -16,7 +16,7 @@ def range_datetime(d):
     return date_start, date_end
 
 def convert_seconds_to_hours(seconds):
-    return seconds / 3600
+    return seconds / 3600.00
 
 def convert_km_to_mt2(km):
     return km * 1000

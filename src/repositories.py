@@ -13,12 +13,20 @@ class HoumerRepository:
         return houmer
 
     def get_by_range_date(self, houmer_id: int, date_start: datetime, date_end: datetime):
-        houmers = self.model.scan((self.model.houmer_id == houmer_id) & (self.model.date_start >= date_start) & (self.model.date_start < date_end))
+        houmers = self.model.scan(
+            (self.model.houmer_id == houmer_id) & 
+            (self.model.date_start >= date_start) & 
+            (self.model.date_start < date_end))
         return houmers
 
     def get_by_range_date_with_speed(
         self, houmer_id: int, date_start: datetime, date_end: datetime, speed: int):
-        houmers = self.model.scan((self.model.houmer_id == houmer_id) & (self.model.date_start >= date_start) & (self.model.date_start < date_end) & (self.model.speed >= int(speed)))
+        houmers = self.model.scan(
+            (self.model.houmer_id == houmer_id) & 
+            (self.model.date_start >= date_start) & 
+            (self.model.date_start < date_end) & 
+            (self.model.speed >= int(speed))
+        )
         return houmers
 
     def update(self, instance, data):
