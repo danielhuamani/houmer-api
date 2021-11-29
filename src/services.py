@@ -1,7 +1,8 @@
 import os
 from src.repositories import HoumerRepository
+from src.db.models import HoumerModel
 from src.exceptions import InvalidMaxDistanceVisit
-from src.utils import now_date, seconds_to_str, date_to_datetime
+from src.utils import (now_date, seconds_to_str, date_to_datetime, range_datetime, convert_seconds_to_hours, convert_km_to_mt2)
 from datetime import timezone, timedelta, date
 from geopy.distance import geodesic as GD
 from uuid import uuid4
@@ -30,10 +31,10 @@ class HoumerService:
         point_start = (latitude_start, longitude_start)
         point_end = (latitude_end, longitude_end)
         distance = self.calculate_distance_km(point_start, point_end)
-        distance_mt2 = distance * 1000
+        distance_mt2 = convert_km_to_mt2(distance)
         if distance_mt2 < self.MT2_MAX:
             spend_time = now_date() - houmer.date_start
-            spend_time_hour = spend_time.seconds / 3600
+            spend_time_hour = convert_seconds_to_hours(spend_time.seconds)
             data = {
                 "latitude_end": latitude_end,
                 "longitude_end": longitude_end,
@@ -52,11 +53,11 @@ class HoumerService:
     
     def get_by_date(self, houmer_id: int, selected_date: date):
         date_start = date_to_datetime(selected_date)
+        date_start = date_start.replace(tzinfo=timezone.utc, hour=0, minute=0, second=0, microsecond=0)
         date_end = date_start + timedelta(hours=24)
         return self.repository.get_by_range_date(houmer_id, date_start, date_end)
     
     def get_by_date_with_speed(self, houmer_id: int, selected_date: date, speed: int):
         date_start = date_to_datetime(selected_date)
-        date_start = date_start.replace(tzinfo=timezone.utc, hour=0, minute=0, second=0, microsecond=0)
-        date_end = date_start + timedelta(hours=24)
+        date_start, date_end = range_datetime(date_start)
         return self.repository.get_by_range_date_with_speed(houmer_id, date_start, date_end, speed)

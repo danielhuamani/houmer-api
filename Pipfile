@@ -9,6 +9,10 @@ flask = "*"
 pynamodb = "*"
 marshmallow = "*"
 geopy = "*"
+pytest-flask = "*"
+pytest = "*"
+pytest-env = "*"
+pytest-order = "*"
 
 [dev-packages]
 
