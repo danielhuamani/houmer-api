@@ -7,7 +7,8 @@ def create_houmer(
     houmer = HoumerModel()
     houmer.id = id
     houmer.houmer_id = houmer_id
-    houmer.date_start = date_start
+    if date_start:
+        houmer.date_start = date_start
     houmer.latitude_start = latitude_start
     houmer.longitude_start = longitude_start
     houmer.latitude_end = latitude_end

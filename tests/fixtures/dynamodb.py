@@ -9,4 +9,4 @@ import pytest
 def set_config():
     HoumerModel.delete_table()
     if not HoumerModel.exists():
-        HoumerModel.create_table(read_capacity_units=1, write_capacity_units=1, wait=True)
+        HoumerModel.create_table(read_capacity_units=2, write_capacity_units=2, wait=True)

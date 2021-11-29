@@ -1,8 +1,10 @@
 from datetime import date, datetime, timezone, timedelta
 from time import strftime, gmtime
+from geopy.distance import geodesic as GD
 
 def now_date():
-    return datetime.now(timezone.utc)
+    now = datetime.now()
+    return now
 
 def seconds_to_str(seconds):
     return strftime("%H:%M", gmtime(seconds))
@@ -20,3 +22,17 @@ def convert_seconds_to_hours(seconds):
 
 def convert_km_to_mt2(km):
     return km * 1000
+
+def convert_datetime_to_timestamp(now):
+    timestamp = datetime.timestamp(now)
+    return timestamp
+
+def convert_timestamp_to_datetime(timestamp):
+    now = datetime.fromtimestamp(timestamp)
+    return now
+
+def calculate_distance_km(point_start, point_end):
+    if None in point_start and None in point_end:
+        return None
+    distance = GD(point_start, point_end).km
+    return distance

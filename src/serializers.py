@@ -1,3 +1,5 @@
+from src.utils import calculate_distance_km, convert_seconds_to_hours
+
 class HoumerSerializer:
 
     def coordinates(self, houmer):
@@ -12,38 +14,40 @@ class HoumerSerializer:
         data = []
         for houmer in houmers:
             data.append({
-                "start_coordinates": {
-                    "latitude": houmer.latitude_start,
-                    "longitude": houmer.longitude_start
-                },
-                "end_coordinates": {
-                    "latitude": houmer.latitude_end,
-                    "longitude": houmer.longitude_end
-                },
-                "spend_time": houmer.spend_time,
-                "date": {
-                    "start": houmer.date_start.strftime("%Y-%m-%d %H:%M"),
-                    "end": houmer.date_end.strftime("%Y-%m-%d %H:%M") if houmer.date_end else None
-                }
+                "houmer_id": houmer.houmer_id,
+                "id": houmer.id,
+                "latitude": houmer.latitude_start,
+                "longitude": houmer.longitude_start,
+                "date_enter_property":  houmer.date_start.strftime("%Y-%m-%d %H:%M:%S"),
+                "date_leave_propery": houmer.date_end.strftime("%Y-%m-%d %H:%M:%S") if houmer.date_end else None,
+                "spend_time": houmer.spend_time
             })
         return data
     
     def speed(self, houmers):
         data = []
+        x = 0
+        houmer_prev = None
         for houmer in houmers:
-            data.append({
-                "start_coordinates": {
+            visits = {
+                "leave_property": {
                     "latitude": houmer.latitude_start,
-                    "longitude": houmer.longitude_start
+                    "longitude": houmer.longitude_start,
+                    "date": houmer.date_end
                 },
-                "end_coordinates": {
+                "enter_property": {
                     "latitude": houmer.latitude_end,
-                    "longitude": houmer.longitude_end
+                    "longitude": houmer.longitude_end,
+                    "date": houmer.date_enter_next_property
                 },
-                "speed": houmer.speed,
-                "date": {
-                    "start": houmer.date_start.strftime("%Y-%m-%d %H:%M"),
-                    "end": houmer.date_end.strftime("%Y-%m-%d %H:%M") if houmer.date_end else None
+                "speed": {
+                    "value": houmer.speed,
+                    "type": "km/h"
+                },
+                "distance": {
+                    "value": houmer.distance,
+                    "type": "km"
                 }
-            })
+            }
+            data.append(visits)
         return data

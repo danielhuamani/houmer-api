@@ -26,6 +26,7 @@ def create_houmer_b_2():
 @pytest.fixture
 def create_houmer_speed_1():
     now = now_date()
+    print(now, "sds")
     return create_houmer(id=str(uuid4()), houmer_id=4, date_start=now, latitude_start=-12.1026755, longitude_start=-77.0266964, speed=20)
 
 @pytest.fixture
@@ -48,25 +49,34 @@ def create_houmer_visit():
 @pytest.fixture
 def create_houmer_visit_completed():
     now = now_date()
-    now_late = now + timedelta(minutes=20)
+    now = now_date() - timedelta(minutes=40)
+    now_late = now - timedelta(minutes=30)
     return create_houmer(id=str(uuid4()), houmer_id=5, date_start=now, latitude_start=-12.1026755, longitude_start=-77.0266964, latitude_end=-12.1226755, longitude_end=-77.0566964, speed=20, distance=200, date_end=now_late, spend_time="02:20")
 
 
 @pytest.fixture
 def create_houmer_visit_incomplement():
     now = now_date()
-    now_late = now + timedelta(minutes=20)
-    return create_houmer(id=str(uuid4()), houmer_id=5, date_start=now, latitude_start=-12.1026755, longitude_start=-77.0266964)
+    now_late = now - timedelta(minutes=20)
+    return create_houmer(id=str(uuid4()), houmer_id=5, date_start=now_late, latitude_start=-12.1026755, longitude_start=-77.0266964)
 
+
+@pytest.fixture
+def create_houmer_visit_incomplement_2():
+    now = now_date()
+    now_late = now - timedelta(minutes=20)
+    return create_houmer(id=str(uuid4()), houmer_id=5, date_start=now_late, date_end=now_late, latitude_start=-12.1026755, longitude_start=-77.0266964)
 
 @pytest.fixture
 def create_houmer_visit_completed_2():
     now = now_date()
-    now_late = now + timedelta(minutes=20)
+    now = now_date() - timedelta(minutes=40)
+    now_late = now - timedelta(minutes=20)
     return create_houmer(id=str(uuid4()), houmer_id=6, date_start=now, latitude_start=-12.1026755, longitude_start=-77.0266964, latitude_end=-12.1226755, longitude_end=-77.0566964, speed=10, distance=200, date_end=now_late, spend_time="04:20")
 
 @pytest.fixture
 def create_houmer_visit_completed_3():
     now = now_date()
-    now_late = now + timedelta(minutes=20)
+    now = now_date() - timedelta(minutes=60)
+    now_late = now - timedelta(minutes=40)
     return create_houmer(id=str(uuid4()), houmer_id=5, date_start=now, latitude_start=-12.1026755, longitude_start=-77.0266964, latitude_end=-12.1226755, longitude_end=-77.0566964, speed=10, distance=200, date_end=now_late, spend_time="04:20")

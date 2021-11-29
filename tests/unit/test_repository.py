@@ -7,15 +7,14 @@ from src.repositories import HoumerRepository
 from uuid import uuid4
 
 def test_repository_last_by_houmer_none():
-    print("test", os.environ.get('TABLE_HOUMER'))
     repository = HoumerRepository()
-    houmer = repository.get_last_by_houmer(id=200)
+    houmer = repository.get_last_by_houmer(houmer_id=200)
     assert houmer == None
 
 
 def test_repository_last_by_houmer_exists(create_houmer_b_2, create_houmer_b):
     repository = HoumerRepository()
-    houmer = repository.get_last_by_houmer(id=3)
+    houmer = repository.get_last_by_houmer(houmer_id=3)
     assert houmer.id == create_houmer_b_2.id
 
 def test_repository_get_by_range_date(create_houmer_b_2):
@@ -23,18 +22,6 @@ def test_repository_get_by_range_date(create_houmer_b_2):
     date_start = date_to_datetime(now.date())
     date_start = date_start.replace(tzinfo=timezone.utc, hour=0, minute=0, second=0, microsecond=0)
     date_end = date_start + timedelta(hours=24)
-    repository = HoumerRepository()
-    houmers = repository.get_by_range_date(houmer_id=3, date_start=date_start, date_end=date_end)
-    total_ids = []
-    for x in houmers:
-        total_ids.append(x.id)
-    assert create_houmer_b_2.id in total_ids
-
-
-def test_repository_get_by_range_date(create_houmer_b_2):
-    now = now_date()
-    date_start = date_to_datetime(now.date())
-    date_start, date_end = range_datetime(date_start)
     repository = HoumerRepository()
     houmers = repository.get_by_range_date(houmer_id=3, date_start=date_start, date_end=date_end)
     total_ids = []
@@ -58,7 +45,7 @@ def test_repository_get_by_range_date_with_speed(create_houmer_b_2, create_houme
 def test_repository_update(create_houmer_b_2):
     repository = HoumerRepository()
     repository.update(create_houmer_b_2, {"houmer_id": 5})
-    houmers = HoumerModel.query(create_houmer_b_2.id)
+    houmers = HoumerModel.query(5, filter_condition=(HoumerModel.id == create_houmer_b_2.id))
     total_houmer_ids = []
     for x in houmers:
         total_houmer_ids.append(x.houmer_id)

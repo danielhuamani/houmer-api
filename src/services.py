@@ -32,26 +32,46 @@ class HoumerService:
         distance = self.calculate_distance_km(point_start, point_end)
         distance_mt2 = convert_km_to_mt2(distance)
         if distance_mt2 < self.MT2_MAX:
+            print(now_date(), houmer.date_start, "*" * 20)
             spend_time = now_date() - houmer.date_start
+            data = {
+                "date_end": now_date(),
+                "spend_time": seconds_to_str(spend_time.seconds),
+            }
+            return self.repository.update(houmer, data)
+        else:
+            raise InvalidMaxDistanceVisit("maximum distance not allowed")
+
+    def create_or_update(self, houmer_id, latitude, longitude):
+        houmer = self.repository.get_last_by_houmer(houmer_id)
+        if houmer.latitude_end is None and houmer.longitude_end is None and houmer.date_end is not None:
+            point_start = (houmer.latitude_start, houmer.longitude_start)
+            point_end = (latitude, longitude)
+            distance = self.calculate_distance_km(point_start, point_end)
+            spend_time = now_date() - houmer.date_end.replace(tzinfo=None)
             spend_time_hour = convert_seconds_to_hours(spend_time.seconds)
             if spend_time_hour == float(0):
                 speed = 0
             else:
                 speed = distance / spend_time_hour
             data = {
-                "latitude_end": latitude_end,
-                "longitude_end": longitude_end,
+                "speed": speed,
                 "distance": distance,
-                "date_end": now_date(),
-                "spend_time": seconds_to_str(spend_time.seconds),
-                "speed": speed
+                "latitude_end": latitude,
+                "longitude_end": longitude,
+                "date_enter_next_property": now_date()
             }
-            return self.repository.update(houmer, data)
-        else:
-            raise InvalidMaxDistanceVisit("maximum distance not allowed")
+            self.repository.update(houmer, data)
+        data = {
+            "houmer_id": houmer_id,
+            "latitude_start": latitude,
+            "longitude_start": longitude,
+            "id": self.generate_id()
+        }
+        return self.repository.create(data)
 
     def create(self, **data: dict):
-        data = {**data, "id": str(uuid4())}
+        data = {**data, "id": self.generate_id()}
         return self.repository.create(data)
     
     def get_by_date(self, houmer_id: int, selected_date: date):
@@ -64,3 +84,6 @@ class HoumerService:
         date_start = date_to_datetime(selected_date)
         date_start, date_end = range_datetime(date_start)
         return self.repository.get_by_range_date_with_speed(houmer_id, date_start, date_end, speed)
+    
+    def generate_id(self):
+        return str(uuid4())

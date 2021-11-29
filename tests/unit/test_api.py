@@ -51,9 +51,8 @@ def test_api_speed_without_parameter(
     assert len(data) == 2
     assert response.status_code == 200
 
-def test_api_init_visit_property(
+def test_api_first_visit_property(
     client):
-    now = now_date().strftime("%Y-%m-%d")
     response = client.post(f'/houmer/10/coordinates', data=json.dumps({
         'longitude': -12.103194,
         'latitude': -77.029797
@@ -66,28 +65,42 @@ def test_api_init_visit_property(
     item = data[0]
     assert len(data) == 1
     assert response.status_code == 201
-    assert item['end_coordinates']['latitude'] is None
-    assert item['end_coordinates']['longitude'] is None
-    assert item['start_coordinates']['latitude'] == -77.029797
-    assert item['start_coordinates']['longitude'] == -12.103194
+    assert item['longitude'] == -12.103194
+    assert item['latitude'] == -77.029797
 
 
-# def test_api_completed_visit(
-#     client, create_houmer_visit_completed, create_houmer_visit_completed_3):
-#     now = now_date().strftime("%Y-%m-%d")
-#     response = client.post(f'/houmer/10/coordinates', data=json.dumps({
-#         'longitude': -12.103194,
-#         'latitude': -77.029797
-#         }),
-#         content_type='application/json'
-#     )
-#     houmers = HoumerModel.scan()
-#     houmer_serializer = HoumerSerializer()
-#     data = houmer_serializer.visit(houmers)
-#     item = data[0]
-#     assert len(data) == 1
-#     assert response.status_code == 201
-#     assert item['end_coordinates']['latitude'] is None
-#     assert item['end_coordinates']['longitude'] is None
-#     assert item['start_coordinates']['latitude'] == -77.029797
-#     assert item['start_coordinates']['longitude'] == -12.103194
+def test_api_completed_visit(
+    client, create_houmer_visit_completed, create_houmer_visit_completed_3):
+    now = now_date().strftime("%Y-%m-%d")
+    response = client.post(f'/houmer/5/coordinates', data=json.dumps({
+        'longitude': -12.103194,
+        'latitude': -77.029797
+        }),
+        content_type='application/json'
+    )
+    houmers = HoumerModel.query(5, limit=3, scan_index_forward=False)
+    houmer_serializer = HoumerSerializer()
+    data = houmer_serializer.visit(houmers)
+    item = data[0]
+    assert len(data) == 3
+    assert response.status_code == 201
+    assert item['latitude'] == -77.029797
+    assert item['longitude'] == -12.103194
+
+
+def test_api_init_other_visit_after_completed_visit(
+    client, create_houmer_visit_incomplement_2):
+    response = client.post(f'/houmer/5/coordinates', data=json.dumps({
+        'longitude': -12.1033048,
+        'latitude': -77.0301591
+        }),
+        content_type='application/json'
+    )
+    houmers = HoumerModel.query(5, limit=3, scan_index_forward=False)
+    houmer_serializer = HoumerSerializer()
+    data = houmer_serializer.visit(houmers)
+    item = data[0]
+    assert len(data) == 2
+    assert response.status_code == 201
+    assert item['latitude'] == -77.0301591
+    assert item['longitude'] == -12.1033048
